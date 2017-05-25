@@ -1,0 +1,9 @@
+{
+  "name": "to-project",
+  "version": "0.0.1",
+  "node-main": "./app/myapi.js",
+  "main": "http://localhost:3000",  
+  "webkit" : {
+    "java" : "true"
+  }
+}

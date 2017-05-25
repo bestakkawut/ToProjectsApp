@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+   <meta charset="utf-8" />
+   <title>My Express API server example</title>
+   <script src="http://code.jquery.com/jquery-latest.js"></script> 
+   <script src="/socket.io/socket.io.js"></script>
+   
+ </head>
+ <style>
+    .clearfix:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+    }
+    .content{
+        display: block;
+        margin-bottom: 20px;
+    }
+    .pic{
+        width: 150px;
+        height: 150px;
+        background-color: gainsboro;
+        float: left;
+        margin-right: 15px;
+        display: block;
+    }
+    .pic-pick{
+        background-color: tomato;
+    }
+    .form{
+        display: block;
+    }
+ </style>
+ <body>
+   <H1>My Express API server example</H1>
+   <div id="input"></div>
+   <div class="content clearfix">
+        <div id="pic1" class="pic">pic1</div>
+        <div id="pic2" class="pic">pic2</div>
+   </div>
+   <form action="" id="form1" class="form clearfix">
+       <input type="radio" value="1" name="subject"> 1
+       <input type="radio" value="2" name="subject"> 2
+       <button type="submit" >send</button>
+   </form>
+   <a href="/games">test</a>
+   
+ </body>
+<script>
+
+ $(function () {
+ var socket = io.connect();
+
+    $('form').submit(function(e){
+        var output = $('input[type=radio]:checked').val()
+        socket.emit('chat message', output);
+        e.preventDefault();
+        return false;
+    });
+
+    socket.on('new message', function(msg){
+     console.log(msg);
+      $('#input').append('<p>'+msg.msg+'</p>');
+      if(msg.msg){
+          $(".pic").removeClass('pic-pick');
+          $("#"+msg.msg).addClass('pic-pick');
+      }
+    });
+
+    
+
+  });
+   </script>
+</html>

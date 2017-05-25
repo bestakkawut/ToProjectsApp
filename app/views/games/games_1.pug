@@ -1,0 +1,132 @@
+include ../header.pug
+style(type="text/css").
+    .content{
+        
+    }
+    .timer{
+        width: 200px;
+        height: 40px;
+    }
+    .question {
+        width: 200px;
+        height: 200px;
+        border: 1px solid #555;
+    }
+    .answer_box{
+        margin-top:10px;
+    }
+    .answer_choice{
+        width: 50px;
+        height: 50px;
+        background: #ccc;
+        float:left;
+        margin-right: 5px;
+    }
+
+
+body
+    div(class='content')
+            div(class='time_box')
+                span="TIME  "
+                h1(class='timer' style={display:'inline'})
+                span="SCORES  "
+                h1(class='scores' style={display:'inline'})=0
+            div(class='question')
+            div(class='answer_box')
+            p(class='process')
+                //- button(class='answer_choice' style={background:color} '(click)'='games_check()')
+                //- button(class='answer_choice _2')
+                //- button(class='answer_choice _3')
+                //- button(class='answer_choice _4')
+
+script.
+    // คำถาม
+    var question = "#{test}".split(',');
+    // ตัวเลือก
+    var qchoice = "#{test}".split(',');
+    // จำนวนคำถาม
+    var iquestion = "#{test}".split(',').length;
+    var seconds=0,scores=0;
+    var timer = setInterval(function(){   
+            seconds++           
+            $('.timer').text(seconds);             
+        },1000);
+    $(document).ready(function(){
+        games_start();
+    });
+    
+    function games_start(){
+        var qs,iqs,popout;
+        
+        if(iquestion!=0){  
+            // qs เลือกคำถามใน array question
+            qs = question[Math.floor(Math.random()*question.length)];            
+            
+            
+            clear_field();
+            // กำหนดคำถาม
+            $(".question").css("background-color",qs);
+
+            // กำหนดตัวเลือก 
+            for(var x in qchoice){
+                $(".answer_box").append("<button class='answer_choice' "
+                +"style='background-color:"+qchoice[x]+"' "
+                +"onclick=check_answer('"+qchoice[x]+"','"+qs+"')"  //ใส่ฟังชั่นตรวจคำตอบ
+                +"></button>");
+            }          
+            // หาที่อยู่ของคำถามใน array  
+            iqs = question.indexOf(qs);
+            // ตัดคำถามที่ได้ออกจาก array เพื่อไม่ให้สุ่มซ้ำขึ้นมาอีก
+            popout = question.splice(iqs,1);
+            console.log(iquestion);
+            
+        }else{
+            //จบเกม
+            end_games();
+        }
+        
+    }
+
+    // ฟังชั่นตรวจคำตอบ
+    function check_answer(choice,answer){
+        if(iquestion!=0){
+            if(choice != answer){
+                // ตอบผิด
+                // wrong 
+                $('.process').text('YOU ARE WRONG');
+                console.log('YOU ARE WRONG');
+            }else{
+                // ตอบถูก
+                //correct
+                $('.process').text('NEXT QUESTION');
+                console.log('NEXT QUESTION');      
+                // ทำให้เวลาเริ่มนับ0ใหม่         
+                seconds = 0;
+                // เพิ่มคะแนนทีละ 1
+                scores++;
+                // ลดจำนวนคำถาม
+                iquestion--;
+                $('.scores').text(scores);    
+                games_start(iquestion);
+            }
+        }else{
+            //จบเกม
+            end_games();
+        }
+    }
+
+    // ฟังชั่น จบเกม
+    function end_games(){
+        $('.process').text('CONGRATULATION');
+        console.log('CONGRATULATION');
+        $('.timer').text('00');   
+        // ยกเลิกการนับเวลา
+        clearInterval(timer);
+        
+    }
+    // ฟังชั่นล้างinterface
+    function clear_field(){
+         $(".question").css("background-color","white");
+         $('.timer').text(0);
+         $('.answer_box').empty();         
+    }
