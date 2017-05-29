@@ -1,5 +1,7 @@
-include ../header.pug
-style(type="text/css").
+extends ../header.pug
+
+block append scripts
+  style(type='text/css').
     .content{
         
     }
@@ -24,7 +26,7 @@ style(type="text/css").
     }
 
 
-body
+  body
     div(class='content')
             div(class='time_box')
                 span="TIME  "
@@ -34,12 +36,10 @@ body
             div(class='question')
             div(class='answer_box')
             p(class='process')
-                //- button(class='answer_choice' style={background:color} '(click)'='games_check()')
-                //- button(class='answer_choice _2')
-                //- button(class='answer_choice _3')
-                //- button(class='answer_choice _4')
 
-script.
+  script.
+    var socket = io.connect();
+
     // คำถาม
     var question = "#{test}".split(',');
     // ตัวเลือก
@@ -51,8 +51,29 @@ script.
             seconds++           
             $('.timer').text(seconds);             
         },1000);
+
+    var socket = io.connect();
+
     $(document).ready(function(){
+
         games_start();
+
+        socket.on('new message', function(msg){
+            switch(msg.data) {
+                case 'btn1':
+                    $('#btn1').click();
+                    break;
+                case 'btn2':  
+                    console.log(msg);
+                    $('#btn2').click();
+                    break;
+                default:
+                    console.log('no click');
+                    break;
+            }
+        $('#input').empty().append('<p>'+msg.data+'</p>');
+        });        
+
     });
     
     function games_start(){
@@ -69,7 +90,7 @@ script.
 
             // กำหนดตัวเลือก 
             for(var x in qchoice){
-                $(".answer_box").append("<button class='answer_choice' "
+                $(".answer_box").append("<button id='#btn'"+x+" class='answer_choice' "
                 +"style='background-color:"+qchoice[x]+"' "
                 +"onclick=check_answer('"+qchoice[x]+"','"+qs+"')"  //ใส่ฟังชั่นตรวจคำตอบ
                 +"></button>");

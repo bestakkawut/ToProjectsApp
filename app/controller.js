@@ -1,4 +1,10 @@
-
+var fs = require('fs');
+fs.writeFile(__dirname+"/log",'hey threre',function(err){
+    if(err){
+        return console.log(err);
+    }
+    console.log('file was saved');
+});
 module.exports = {
     cl_games: function(id){
         if(!id){
@@ -23,5 +29,20 @@ module.exports = {
             
             return que;
         }
+    },
+
+
+    switchInput: function(io,value,led,socket){
+        if(value==1){
+            led.writeSync(value);
+            socket.emit('new message', {msg:{stat:true,data:io}});
+        }else{
+            led.writeSync(0);
+            socket.emit('new message', {msg:{stat:false,data:'error switchInput function'+io}});
+        }    
     }
+
+
+    
+
 };

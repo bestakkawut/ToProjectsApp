@@ -57,18 +57,33 @@
 
     $('form').submit(function(e){
         var output = $('input[type=radio]:checked').val()
-        socket.emit('chat message', output);
+        socket.emit('picpicksend', output);
         e.preventDefault();
         return false;
     });
-
-    socket.on('new message', function(msg){
-     console.log(msg);
-      $('#input').append('<p>'+msg.msg+'</p>');
-      if(msg.msg){
+    socket.on('picpick', function(msg){
+	if(msg.msg){
           $(".pic").removeClass('pic-pick');
           $("#"+msg.msg).addClass('pic-pick');
-      }
+        } 
+    });
+    socket.on('new message', function(msg){
+	    switch(msg.data) {
+            case 'btn1':
+                console.log(msg);
+                $('#btn1').attr('checked','checked');
+                $('#submit').click();
+                break;
+            case 'btn2':  
+                console.log(msg);
+                $('#btn2').attr('checked','checked');
+                $('#submit').click();          
+                break;
+            default:
+                console.log('no click');
+                break;
+        }
+      $('#input').empty().append('<p>'+msg.data+'</p>');
     });
 
     
