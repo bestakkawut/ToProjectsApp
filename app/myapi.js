@@ -4,8 +4,12 @@ var http = require('http');
 var pug = require('pug');
 var routes = require('./routes.js');
 var controller = require('./controller.js');
+var fs = require('fs');
+var body = require('body-parser');
+
+
 // for Raspberry
-// var Gpio = require('onoff').Gpio;
+var Gpio = require('onoff').Gpio;
 
 //app setting 
 
@@ -13,6 +17,8 @@ app.use(express['static'](__dirname ));
 app.set('views',__dirname+'/views');
 app.set('view engine', 'pug');
 
+app.use(body.json()); // support json encoded bodies
+app.use(body.urlencoded({ extended: true })); // support encoded bodies
 
 
 var server = app.listen(3000);
@@ -23,14 +29,14 @@ var io = require('socket.io').listen(server);
 console.log('App Server running at port 3000');
 
 // for Raspberry
-btn1 = new Gpio(14,'in','both');
-btn2 = new Gpio(15,'in','both');
-btn3 = new Gpio(18,'in','both');
+btn0 = new Gpio(14,'in','both');
+btn1 = new Gpio(15,'in','both');
+btn2 = new Gpio(18,'in','both');
 led = new Gpio(24, 'out');
-
+// var btn0 = btn1 = btn2 = led = null;
 
 // routes
-routes.views(app);
+routes.views(app,body);
 // ** routes
 
 io.on('connection',function(socket){ 
@@ -44,17 +50,17 @@ io.on('connection',function(socket){
 });
 
 //for Raspberry
-//
+
 io.on('connection',function(socket){
+  btn0.watch(function(err,value){
+    controller.switchInput('btn0',value,led,socket);
+  });
   btn1.watch(function(err,value){
     controller.switchInput('btn1',value,led,socket);
   });
   btn2.watch(function(err,value){
     controller.switchInput('btn2',value,led,socket);
   });
-  // btn3.watch(function(err,value){
-  //   controller.switchInput('btn3',value,led,socket);
-  // });
 });
 
 

@@ -31,123 +31,33 @@ block append scripts
             div(class='time_box')
                 span="TIME  "
                 h1(class='timer' style={display:'inline'})
-                span="SCORES  "
-                h1(class='scores' style={display:'inline'})=0
+                span="Games: "
+                h1(class='games' style={display:'inline'})=0
             div(class='question')
             div(class='answer_box')
             p(class='process')
-
+            
+  
   script.
+
     var socket = io.connect();
 
-    // คำถาม
-    var question = "#{test}".split(',');
-    // ตัวเลือก
-    var qchoice = "#{test}".split(',');
-    // จำนวนคำถาม
-    var iquestion = "#{test}".split(',').length;
-    var seconds=0,scores=0;
+    // คำถาม : // ตัวเลือก
+    var question = "#{choice}".split(',');
+    var qchoice = "#{choice}".split(',');
+    var _question = [];// สำรองคำถาม    
+    var d = new Date();
+    var n = d.getTime();  
+    // จำนวนคำถาม 
+    // "#{choice}".split(',').length
+    var iquestion = 5,maxtimes = 1;
+    var seconds=0,scores=0,answer={'true':0,'false':0,'time':0,'score':0};
     var timer = setInterval(function(){   
-            seconds++           
-            $('.timer').text(seconds);             
-        },1000);
-
-    var socket = io.connect();
-
-    $(document).ready(function(){
-
-        games_start();
-
-        socket.on('new message', function(msg){
-            switch(msg.data) {
-                case 'btn1':
-                    $('#btn1').click();
-                    break;
-                case 'btn2':  
-                    console.log(msg);
-                    $('#btn2').click();
-                    break;
-                default:
-                    console.log('no click');
-                    break;
-            }
-        $('#input').empty().append('<p>'+msg.data+'</p>');
-        });        
-
-    });
+        seconds++;           
+        $('.timer').text(seconds);             
+    },1000); 
     
-    function games_start(){
-        var qs,iqs,popout;
-        
-        if(iquestion!=0){  
-            // qs เลือกคำถามใน array question
-            qs = question[Math.floor(Math.random()*question.length)];            
-            
-            
-            clear_field();
-            // กำหนดคำถาม
-            $(".question").css("background-color",qs);
 
-            // กำหนดตัวเลือก 
-            for(var x in qchoice){
-                $(".answer_box").append("<button id='#btn'"+x+" class='answer_choice' "
-                +"style='background-color:"+qchoice[x]+"' "
-                +"onclick=check_answer('"+qchoice[x]+"','"+qs+"')"  //ใส่ฟังชั่นตรวจคำตอบ
-                +"></button>");
-            }          
-            // หาที่อยู่ของคำถามใน array  
-            iqs = question.indexOf(qs);
-            // ตัดคำถามที่ได้ออกจาก array เพื่อไม่ให้สุ่มซ้ำขึ้นมาอีก
-            popout = question.splice(iqs,1);
-            console.log(iquestion);
-            
-        }else{
-            //จบเกม
-            end_games();
-        }
-        
-    }
-
-    // ฟังชั่นตรวจคำตอบ
-    function check_answer(choice,answer){
-        if(iquestion!=0){
-            if(choice != answer){
-                // ตอบผิด
-                // wrong 
-                $('.process').text('YOU ARE WRONG');
-                console.log('YOU ARE WRONG');
-            }else{
-                // ตอบถูก
-                //correct
-                $('.process').text('NEXT QUESTION');
-                console.log('NEXT QUESTION');      
-                // ทำให้เวลาเริ่มนับ0ใหม่         
-                seconds = 0;
-                // เพิ่มคะแนนทีละ 1
-                scores++;
-                // ลดจำนวนคำถาม
-                iquestion--;
-                $('.scores').text(scores);    
-                games_start(iquestion);
-            }
-        }else{
-            //จบเกม
-            end_games();
-        }
-    }
-
-    // ฟังชั่น จบเกม
-    function end_games(){
-        $('.process').text('CONGRATULATION');
-        console.log('CONGRATULATION');
-        $('.timer').text('00');   
-        // ยกเลิกการนับเวลา
-        clearInterval(timer);
-        
-    }
-    // ฟังชั่นล้างinterface
-    function clear_field(){
-         $(".question").css("background-color","white");
-         $('.timer').text(0);
-         $('.answer_box').empty();         
-    }
+  
+  script(src= "../../my_helper.js")
+  script(src= "../scripts/__games_1.js")
